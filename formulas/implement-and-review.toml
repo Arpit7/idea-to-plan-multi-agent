@@ -1,0 +1,17 @@
+formula = "implement-and-review"
+description = "Coder writes the feature, then reviewer audits it"
+
+[vars.task]
+description = "What the coder should build"
+required = true
+
+[[steps]]
+id = "implement"
+title = "Implement: {{task}}"
+description = "Build the feature described in the task variable. Add tests."
+
+[[steps]]
+id = "review"
+title = "Review: {{task}}"
+description = "Audit the coder's output. Write findings to review.md."
+needs = ["implement"]

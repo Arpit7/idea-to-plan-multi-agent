@@ -1,0 +1,332 @@
+description = """
+Full pipeline from vague idea to reviewed, beads-ready implementation plan.
+
+Optimized for poc-city: fewer review legs, mail-driven coordination, no poll loops.
+
+Uses:
+- repo-local artifacts (`.prd-reviews/`, `.designs/`, `.plan-reviews/`)
+- review task beads + `gc sling` to `$REVIEW_TARGET` (default: `$GC_RIG/polecat-review`)
+- worker formula `mol-review-leg` (see poc-city/formulas/mol-review-leg.toml)
+- one human clarification gate
+- final convoy + bead DAG in create-beads
+
+## Pipeline (10 steps, 9 review legs)
+
+1. init-run
+2. draft-prd
+3. prd-review (3 parallel legs)
+4. human-clarify
+5. design-exploration (3 parallel legs)
+6. prd-align-1, prd-align-2, prd-align-3 (1 leg each)
+7. plan-review-1, plan-review-2 (1 leg each)
+8. create-beads
+
+## SPEED DIRECTIVE (applies to ALL steps)
+
+- NEVER use `sleep`, `until`, or background poll loops to wait for leg completion.
+- NEVER wait more than 30 seconds between actions.
+- Use `gc mail inbox` for completion signals (subject: `IDEA_REVIEW ...`).
+- If dispatched legs are already closed when you check, proceed immediately.
+- Dispatch ALL legs for a step in one batch, THEN check mail once.
+- Do NOT run: `until (gc bd show ... | grep CLOSED); do sleep 600; done`
+- On compaction/restart, read `.plan-reviews/$REVIEW_ID/state.env` (`CURRENT_STEP=`) and resume from the next step — do not re-run completed steps.
+- If `design-doc.md` is already in context and unchanged since your last edit, do NOT re-read it.
+
+## Shared Dispatch Pattern
+
+Every step that dispatches review legs:
+
+1. Create all leg beads: `gc bd --rig=$GC_RIG create ...` with metadata `coordinator`, `review_id`, `review_phase`, `review_leg`
+2. Sling each to `$REVIEW_TARGET`: `gc sling "$REVIEW_TARGET" "$BEAD" --on {{review_formula}}`
+3. Record IDs in the step TSV under `.plan-reviews/$REVIEW_ID/`
+4. Check `gc mail inbox` once (NO poll loops)
+5. For each closed leg, read report: `gc bd --rig=$GC_RIG show <id>`
+
+Batch example:
+```bash
+for LEG in leg1 leg2 leg3; do
+  BEAD=$(gc bd --rig=$GC_RIG create "Review: $LEG — $REVIEW_ID" \
+    --description "..." \
+    --metadata coordinator=$COORDINATOR,review_id=$REVIEW_ID,review_phase=<phase>,review_leg=$LEG \
+    2>&1 | grep -oE 'pp-[a-z0-9]+' | head -1)
+  gc sling "$REVIEW_TARGET" "$BEAD" --on {{review_formula}}
+  echo -e "$BEAD\t$LEG\tdispatched" >> ".plan-reviews/$REVIEW_ID/<tracker>.tsv"
+done
+gc mail inbox
+```
+"""
+formula = "mol-idea-to-plan"
+version = 3
+contract = "graph.v2"
+
+[vars]
+[vars.problem]
+description = "Raw feature idea, problem statement, or request"
+required = true
+
+[vars.context]
+description = "Additional context: constraints, prior decisions, related code, links, or examples"
+default = ""
+
+[vars.review_target]
+description = "Agent pool for review legs (e.g. poc-project/polecat-review). Empty means $GC_RIG/polecat-review."
+default = ""
+
+[vars.review_formula]
+description = "Formula used for dispatched review legs"
+default = "mol-review-leg"
+
+[[steps]]
+id = "init-run"
+title = "Initialize the planning run in the current repo"
+description = """
+**1. Prime and move to repo root:**
+```bash
+gc prime
+gc bd prime
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+```
+
+**2. Resolve review target (poc-city default: polecat-review):**
+```bash
+REVIEW_TARGET="{{review_target}}"
+if [ -z "$REVIEW_TARGET" ]; then
+  if [ -n "$GC_RIG" ]; then
+    REVIEW_TARGET="$GC_RIG/polecat-review"
+  else
+    echo "Pass --var review_target=<rig>/polecat-review when not in a rig session."
+  fi
+fi
+COORDINATOR="$GC_AGENT"
+```
+
+**3. Create artifact dirs and progress tracker:**
+Choose a short `REVIEW_ID` slug (e.g. `financial-planner`).
+
+```bash
+mkdir -p ".prd-reviews/$REVIEW_ID" ".designs/$REVIEW_ID" ".plan-reviews/$REVIEW_ID"
+cat > ".plan-reviews/$REVIEW_ID/state.env" <<EOF
+REVIEW_ID=$REVIEW_ID
+REVIEW_TARGET=$REVIEW_TARGET
+COORDINATOR=$COORDINATOR
+REPO_ROOT=$REPO_ROOT
+CURRENT_STEP=init-run
+EOF
+```
+
+After each step completes, update progress:
+```bash
+# macOS
+sed -i '' "s/^CURRENT_STEP=.*/CURRENT_STEP=<step-id>/" ".plan-reviews/$REVIEW_ID/state.env"
+```
+
+Reuse the same `REVIEW_ID` on restart; read `state.env` to resume.
+"""
+
+[[steps]]
+id = "draft-prd"
+title = "Write a draft PRD from the raw idea"
+needs = ["init-run"]
+description = """
+Write `.prd-reviews/$REVIEW_ID/prd-draft.md` from `{{problem}}` and `{{context}}`.
+
+Structure:
+```markdown
+# PRD: <feature name>
+## Problem Statement
+## Goals
+## Non-Goals
+## User Stories / Scenarios
+## Constraints
+## Open Questions
+## Rough Approach
+```
+
+Create `.plan-reviews/$REVIEW_ID/manifest.md` with review id, repo root, coordinator, review target, problem.
+
+Set `CURRENT_STEP=draft-prd` in state.env when done.
+"""
+
+[[steps]]
+id = "prd-review"
+title = "Dispatch 3 PRD review legs and synthesize"
+needs = ["draft-prd"]
+description = """
+Follow the **Shared Dispatch Pattern**. Phase: `prd-review`. Tracker: `prd-review-beads.tsv`.
+
+**Create 3 legs (merged focuses):**
+- `requirements-and-gaps`: success criteria, acceptance, testability, failure modes, missing requirements, edge cases, migration, ops gaps
+- `feasibility-and-scope`: hard technical problems, prerequisites, MVP boundary, defer candidates
+- `ambiguity-and-stakeholders`: vague language, contradictions, undefined terms, missing users/operators/security
+
+Each bead description must include:
+- Read `.prd-reviews/$REVIEW_ID/prd-draft.md`
+- Full report in bead notes; mail `$COORDINATOR` on complete
+- Report structure: Summary, Critical Gaps/Questions, Important Considerations, Observations, Confidence Assessment
+
+After all 3 legs close (check mail, NOT poll), synthesize `.prd-reviews/$REVIEW_ID/prd-review.md`:
+Executive Summary, Before You Build: Critical Questions, Important But Non-Blocking, Observations, Confidence, Next Steps.
+
+Set `CURRENT_STEP=prd-review` in state.env.
+"""
+
+[[steps]]
+id = "human-clarify"
+title = "Ask the human the consolidated PRD questions"
+needs = ["prd-review"]
+description = """
+Only required human gate.
+
+1. Read `.prd-reviews/$REVIEW_ID/prd-review.md`
+2. Present critical questions in chat (do not mail)
+3. After human replies, append to `prd-draft.md`:
+```markdown
+## Clarifications from Human Review
+**Q: ...** A: ...
+```
+4. Append checkpoint to `.plan-reviews/$REVIEW_ID/human-clarifications.md`
+
+Set `CURRENT_STEP=human-clarify` in state.env.
+"""
+
+[[steps]]
+id = "design-exploration"
+title = "Dispatch 3 design legs and synthesize design doc"
+needs = ["human-clarify"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `design-exploration`. Tracker: `design-review-beads.tsv`.
+
+**Create 3 legs:**
+- `api-and-ux`: CLI/API shape, ergonomics, mental model, workflow, errors, docs
+- `data-and-scale`: data model, storage, migrations, bottlenecks, degradation, caching
+- `security-and-integration`: trust boundaries, validation, rollout, compatibility, testing strategy
+
+Inputs in each bead: `prd-draft.md`, `prd-review.md`.
+
+Report structure: Summary, Key Considerations, Options Explored, Recommendation, Constraints, Open Questions, Integration Points.
+
+After all 3 close, synthesize `.designs/$REVIEW_ID/design-doc.md` (Executive Summary through Implementation Plan, Open Questions).
+
+Set `CURRENT_STEP=design-exploration` in state.env.
+"""
+
+[[steps]]
+id = "prd-align-1"
+title = "PRD alignment round 1"
+needs = ["design-exploration"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `prd-align-1`. Tracker: `prd-align-beads.tsv`.
+
+**1 leg:** `requirements-goals-alignment` — verify every requirement and goal is concretely covered in the design.
+
+**Scoped reads for the reviewer bead:**
+- `.prd-reviews/$REVIEW_ID/prd-draft.md`
+- `.designs/$REVIEW_ID/design-doc.md` (sections: Goals, Non-Goals, Key Components only)
+
+Classify findings as `must-fix` or `should-fix`. After report: update design-doc, log in `prd-align-round-1.md`.
+
+Set `CURRENT_STEP=prd-align-1` in state.env.
+"""
+
+[[steps]]
+id = "prd-align-2"
+title = "PRD alignment round 2"
+needs = ["prd-align-1"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `prd-align-2`.
+
+**1 leg:** `constraints-and-nongoals` — constraints respected; cut scope violating Non-Goals.
+
+**Scoped reads:**
+- `prd-draft.md`
+- `design-doc.md` (sections: Constraints, Non-Goals)
+- `.plan-reviews/$REVIEW_ID/prd-align-round-1.md` only (not all prior logs)
+
+After report: update design-doc, log `prd-align-round-2.md`.
+
+Set `CURRENT_STEP=prd-align-2` in state.env.
+"""
+
+[[steps]]
+id = "prd-align-3"
+title = "PRD alignment round 3"
+needs = ["prd-align-2"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `prd-align-3`.
+
+**1 leg:** `stories-and-open-questions` — user stories end-to-end; open questions answered or deferred.
+
+**Scoped reads:**
+- `prd-draft.md`
+- `design-doc.md` (sections: User Stories, Open Questions)
+- `prd-align-round-2.md` only
+
+After report: update design-doc, log `prd-align-round-3.md`, brief summary in chat.
+
+Set `CURRENT_STEP=prd-align-3` in state.env.
+"""
+
+[[steps]]
+id = "plan-review-1"
+title = "Plan self-review round 1"
+needs = ["prd-align-3"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `plan-review-1`.
+
+**1 leg:** `completeness-and-sequencing` — missing setup/migrations/tests/docs/rollback; wrong order, hidden deps, circularity.
+
+**Scoped reads:**
+- `design-doc.md` (full)
+- `.plan-reviews/$REVIEW_ID/prd-align-round-3.md` only
+
+After report: update design-doc, log `review-round-1.md`.
+
+Set `CURRENT_STEP=plan-review-1` in state.env.
+"""
+
+[[steps]]
+id = "plan-review-2"
+title = "Plan self-review round 2 (final plan review)"
+needs = ["plan-review-1"]
+description = """
+Follow **Shared Dispatch Pattern**. Phase: `plan-review-2`.
+
+**1 leg:** `risk-and-scope-creep` — technical/rollback risks, gold-plating, over-engineering, defer candidates.
+
+**Scoped reads:**
+- `design-doc.md` (sections: Risks and Mitigations, Implementation Plan)
+- `.plan-reviews/$REVIEW_ID/review-round-1.md` only
+
+After report: update design-doc, log `review-round-2.md`, summarize artifact paths in chat.
+
+Set `CURRENT_STEP=plan-review-2` in state.env.
+"""
+
+[[steps]]
+id = "create-beads"
+title = "Convert the refined plan into beads and dependencies"
+needs = ["plan-review-2"]
+description = """
+Turn the final design into executable work.
+
+**1. Read final plan:**
+```bash
+cat ".designs/$REVIEW_ID/design-doc.md"
+```
+
+**2. Create owned convoy:**
+```bash
+gc convoy create "<initiative-name>" --owned --target integration/<slug> --owner "$COORDINATOR"
+```
+
+**3. Create thin vertical-slice task beads** (what changes, files, acceptance criteria from design doc). Add to convoy: `gc convoy add <convoy-id> <task-id>`
+
+**4. Wire deps:** `gc bd dep add <blocked> <blocker>` then `gc bd blocked`
+
+**5. Write** `.plan-reviews/$REVIEW_ID/beads-created.md` with convoy id, task ids, dispatch order.
+
+**6. Tell the human:** convoy id, artifact paths, first bead to sling.
+
+Set `CURRENT_STEP=create-beads` in state.env. Close this workflow step when done.
+"""

@@ -1,0 +1,3 @@
+dir = "poc-project"
+provider = "claude"
+option_defaults = { model = "sonnet" }
