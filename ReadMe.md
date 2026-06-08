@@ -1,4 +1,4 @@
-# Demo 13 — Idea to Plan
+# Demo — Idea to Plan
 
 **Turn a vague feature idea into a reviewed PRD, a design doc, and a ready-to-build task graph — automatically, using a team of AI agents that coordinate like a real engineering org.**
 
