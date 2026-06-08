@@ -135,13 +135,13 @@ gc reload                      # load formulas + agents
 gc formula show mol-idea-to-plan
 
 # run it (the demo script provides a scoped default IDEA/CONTEXT)
-./demo-scripts/13-demo-idea-to-plan.sh
+./demo-idea-to-plan.sh
 ```
 
 To use your own idea, override the env vars:
 
 ```bash
-DEMO13_IDEA="..." DEMO13_CONTEXT="..." ./demo-scripts/13-demo-idea-to-plan.sh
+DEMO13_IDEA="..." DEMO13_CONTEXT="..." ./demo-idea-to-plan.sh
 ```
 
 **Scope matters.** A vague "build me a startup" idea produces a 700-line design and hours of review. The default idea is a deliberately MVP-scoped financial planner.
