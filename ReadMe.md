@@ -2,9 +2,11 @@
 
 **Turn a vague feature idea into a reviewed PRD, a design doc, and a ready-to-build task graph — automatically, using a team of AI agents that coordinate like a real engineering org.**
 
-This README explains what Demo 13 does, why it's interesting, and how to run it. It assumes you know what LLM agents are, but not how *this* system (GasCity) works.
+This README explains what Demo does, why it's interesting, and how to run it. It assumes you know what LLM agents are, but not how *this* system (GasCity) works.
 
 ---
+## 0. Prerequisite 
+https://github.com/gastownhall/gascity#quickstart
 
 ## 1. The 30-second pitch
 
@@ -26,7 +28,7 @@ All of this runs as a single workflow, with parallel reviewers, no human babysit
 
 The naive way to do "idea → plan" with an LLM is one giant prompt. That produces shallow, unscoped output and hallucinated requirements.
 
-Demo 13 instead models the **org chart of a real planning process**:
+Demo  instead models the **org chart of a real planning process**:
 
 - A **coordinator** (`mayor`) that owns the workflow and never does review work itself.
 - A pool of **lightweight reviewer agents** (`polecat-review`) that each take one narrow lens (e.g. "feasibility only", "security only").
@@ -141,7 +143,7 @@ gc formula show mol-idea-to-plan
 To use your own idea, override the env vars:
 
 ```bash
-DEMO13_IDEA="..." DEMO13_CONTEXT="..." ./demo-idea-to-plan.sh
+DEMO_IDEA="..." DEMO_CONTEXT="..." ./demo-idea-to-plan.sh
 ```
 
 **Scope matters.** A vague "build me a startup" idea produces a 700-line design and hours of review. The default idea is a deliberately MVP-scoped financial planner.
