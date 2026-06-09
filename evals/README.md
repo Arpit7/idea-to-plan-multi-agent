@@ -1,4 +1,4 @@
-# Demo 13 — Idea-to-Plan Eval Framework (Tier 1)
+#  Idea-to-Plan Eval Framework (Tier 1)
 
 Deterministic checks for `mol-idea-to-plan` outputs. Two modes of operation:
 
