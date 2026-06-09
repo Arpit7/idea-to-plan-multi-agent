@@ -11,7 +11,7 @@ Deterministic checks for `mol-idea-to-plan` outputs. Two modes of operation:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    mol-idea-to-plan pipeline                     │
+│                    mol-idea-to-plan pipeline                    │
 │                                                                 │
 │  ┌──────────┐    ┌──────────┐         ┌──────────────────────┐  │
 │  │ init-run │───▶│ ...steps │────────▶│ create-beads         │  │
