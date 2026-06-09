@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Idea-to-Plan Eval Contract",
+  "description": "Frozen per-case contract that Tier 1 checks run against. Authored once per eval input, human-reviewed, then versioned.",
+  "type": "object",
+  "required": ["meta", "requirements", "non_goals", "stack", "limits"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["case_id", "created_at"],
+      "properties": {
+        "case_id": { "type": "string", "description": "Unique eval case identifier" },
+        "created_at": { "type": "string", "format": "date" },
+        "description": { "type": "string" }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "description": "Features/capabilities that MUST appear in the design output",
+      "items": {
+        "type": "object",
+        "required": ["id", "term", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "term": { "type": "string", "description": "Short searchable term (used for extraction matching)" },
+          "description": { "type": "string", "description": "Full requirement statement" },
+          "match_patterns": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Regex patterns that indicate this requirement is covered in output"
+          }
+        }
+      }
+    },
+    "non_goals": {
+      "type": "array",
+      "description": "Features that must NOT appear as included capabilities in the design",
+      "items": {
+        "type": "object",
+        "required": ["id", "term"],
+        "properties": {
+          "id": { "type": "string" },
+          "term": { "type": "string", "description": "The non-goal feature name" },
+          "leak_patterns": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Regex patterns that indicate this non-goal leaked INTO the design as an included feature"
+          },
+          "safe_patterns": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Regex patterns where the term appearing is OK (e.g., inside a Non-Goals section)"
+          }
+        }
+      }
+    },
+    "deferred": {
+      "type": "array",
+      "description": "Items explicitly deferred to later versions",
+      "items": {
+        "type": "object",
+        "required": ["id", "term"],
+        "properties": {
+          "id": { "type": "string" },
+          "term": { "type": "string" }
+        }
+      }
+    },
+    "stack": {
+      "type": "object",
+      "description": "Expected technology stack",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Stack items that must appear in the design"
+        },
+        "forbidden": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Stack items that must NOT appear (e.g., competing frameworks)"
+        },
+        "allow_justified_deviation": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, a deviation flagged with explicit rationale is a WARN not FAIL"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "description": "Numeric constraints that must be respected in the design",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "match_pattern"],
+        "properties": {
+          "value": { "type": "number" },
+          "match_pattern": { "type": "string", "description": "Regex to find where this limit is declared in output" },
+          "comparison": { "type": "string", "enum": ["eq", "lte", "gte"], "default": "eq" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Expected output artifacts (file existence checks)",
+      "properties": {
+        "required_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Glob patterns for files that must exist after a successful run"
+        },
+        "required_sections": {
+          "type": "object",
+          "description": "Map of file glob -> list of section headings that must appear",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

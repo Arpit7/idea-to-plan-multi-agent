@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "case_id": "financial-planner",
+    "created_at": "2026-06-09",
+    "description": "Local-first AI financial planner MVP — 5 CSVs, 3 goals, deterministic model, Markdown output"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "5 CSV sources",
+      "description": "Ingest CSV exports from exactly 5 sources: salary account, broker, MF platform, credit card, EPF",
+      "match_patterns": ["(?i)5\\s*(csv|source|format)", "(?i)salary.*broker.*MF.*credit.*EPF", "(?i)five.*(csv|source|format)"]
+    },
+    {
+      "id": "R2",
+      "term": "balance sheet",
+      "description": "Build a unified balance sheet view from ingested data",
+      "match_patterns": ["(?i)balance.?sheet", "(?i)net.?worth.*view"]
+    },
+    {
+      "id": "R3",
+      "term": "cash-flow view",
+      "description": "Build a cash-flow view from ingested data",
+      "match_patterns": ["(?i)cash.?flow", "(?i)income.*expense.*breakdown"]
+    },
+    {
+      "id": "R4",
+      "term": "plain language goals",
+      "description": "User sets 2-3 goals in plain language",
+      "match_patterns": ["(?i)(plain.?language|natural.?language).*goal", "(?i)goal.*(plain|natural|text)"]
+    },
+    {
+      "id": "R5",
+      "term": "deterministic model",
+      "description": "Deterministic model computes SIP needs, inflation, and allocation",
+      "match_patterns": ["(?i)deterministic.*(model|comput|engine|math)", "(?i)SIP.*(calcul|comput|math)"]
+    },
+    {
+      "id": "R6",
+      "term": "LLM narrates structured only",
+      "description": "Local LLM narrates recommendations from structured outputs only, never raw transactions",
+      "match_patterns": ["(?i)LLM.*narrat.*structured", "(?i)never.*raw.*transaction", "(?i)structured.*output.*only"]
+    },
+    {
+      "id": "R7",
+      "term": "markdown plan output",
+      "description": "MVP output is a Markdown plan with monthly SIP suggestions and goal timelines",
+      "match_patterns": ["(?i)markdown.*plan", "(?i)SIP.*suggest", "(?i)goal.*timeline"]
+    },
+    {
+      "id": "R8",
+      "term": "local only",
+      "description": "All data stays local, laptop-only, no cloud sync",
+      "match_patterns": ["(?i)local.?(first|only)", "(?i)no.*cloud", "(?i)laptop.?only"]
+    },
+    {
+      "id": "R9",
+      "term": "encrypted storage",
+      "description": "DuckDB or equivalent encrypted local database",
+      "match_patterns": ["(?i)(duckdb|sqlite|sqlcipher).*encrypt", "(?i)encrypt.*local.*db", "(?i)AES|cipher"]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "React UI",
+      "leak_patterns": ["(?i)(react|frontend|web.?ui|dashboard|SPA).*(?:phase|implement|build|component|route)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer", "(?i)explicit.*non"]
+    },
+    {
+      "id": "NG2",
+      "term": "PDF/charts",
+      "leak_patterns": ["(?i)(PDF|chart|graph|visualization).*(?:export|generat|render|phase|implement)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer"]
+    },
+    {
+      "id": "NG3",
+      "term": "tax filing",
+      "leak_patterns": ["(?i)(tax.?fil|ITR|income.?tax.?return).*(?:assist|generat|implement|phase|calcul)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer", "(?i)not.*tax"]
+    },
+    {
+      "id": "NG4",
+      "term": "multi-user",
+      "leak_patterns": ["(?i)(multi.?user|household|family.?budget|auth|login|session).*(?:support|implement|phase)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer", "(?i)single.*user", "(?i)owner_id.*forward"]
+    },
+    {
+      "id": "NG5",
+      "term": "cloud LLM default",
+      "leak_patterns": ["(?i)(cloud|claude|gpt|openai|anthropic).*(?:default|primary|main)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*default", "(?i)opt.?in", "(?i)explicit.*api.*key", "(?i)optional"]
+    },
+    {
+      "id": "NG6",
+      "term": "real-estate/gold beyond read-only",
+      "leak_patterns": ["(?i)(real.?estate|gold|property).*(purchase|buy|goal.?type|calculator|trade|transact)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer", "(?i)read.?only", "(?i)manual.*entry.*only", "(?i)beyond.*read"]
+    },
+    {
+      "id": "NG7",
+      "term": "rebalancing automation",
+      "leak_patterns": ["(?i)rebalanc.*(automat|trigger|implement|phase|engine)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer", "(?i)user.?initiated"]
+    },
+    {
+      "id": "NG8",
+      "term": "financial coach chat",
+      "leak_patterns": ["(?i)(coach|chat|conversation|Q&A|follow.?up).*(?:implement|phase|build|feature)"],
+      "safe_patterns": ["(?i)non.?goal", "(?i)not.*v1", "(?i)defer"]
+    }
+  ],
+  "deferred": [
+    { "id": "D1", "term": "scenario what-if" },
+    { "id": "D2", "term": "compliance engine" },
+    { "id": "D3", "term": "mobile app" }
+  ],
+  "stack": {
+    "required": ["Python", "Pandas", "Ollama"],
+    "forbidden": ["LangGraph", "LangChain", "Next.js", "Django", "FastAPI"],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "max_goals": {
+      "value": 3,
+      "match_pattern": "(?i)(max|limit|cap).*3.*(goal|active)",
+      "comparison": "eq"
+    },
+    "csv_formats": {
+      "value": 5,
+      "match_pattern": "(?i)(exact|support|v1).*5.*(csv|format|source|template)",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": ["Problem Statement", "Goals", "Non-Goals", "User Stories", "Constraints"],
+      ".prd-reviews/*/prd-review.md": ["Executive Summary", "Blockers", "Confidence"],
+      ".designs/*/design-doc.md": ["CLI Surface", "Data Model", "Security", "Testing"]
+    }
+  }
+}

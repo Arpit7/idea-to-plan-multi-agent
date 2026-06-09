@@ -1,0 +1,201 @@
+{
+  "meta": {
+    "case_id": "ai-financial-doc-qa",
+    "created_at": "2026-06-09",
+    "description": "Create a local Gen-AI question-answering assistant over a user's personal financial documents (bank statements, salary s"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "on-device RAG index",
+      "description": "Build an on-device RAG index over personal financial documents",
+      "match_patterns": ["(?i)(RAG|retrieval).*(index|on.?device|local)", "(?i)(embedding|vector).*(index|store|faiss)"]
+    },
+    {
+      "id": "R2",
+      "term": "grounded answers with citations",
+      "description": "LLM answers grounded strictly in retrieved chunks with citations",
+      "match_patterns": ["(?i)(grounded|cite|citation).*(chunk|source|retriev)", "(?i)answer.*(grounded|cite|source)"]
+    },
+    {
+      "id": "R3",
+      "term": "natural-language Q&A",
+      "description": "Answer natural-language questions over documents",
+      "match_patterns": ["(?i)(natural.?language|question).*(answer|query|Q&A)", "(?i)question.?answering"]
+    },
+    {
+      "id": "R4",
+      "term": "fully offline",
+      "description": "Everything runs offline; documents never leave the machine",
+      "match_patterns": ["(?i)offline", "(?i)never.*leave", "(?i)on.?device"]
+    },
+    {
+      "id": "R5",
+      "term": "document ingestion",
+      "description": "Ingest PDF, TXT, and CSV documents into the index",
+      "match_patterns": ["(?i)(ingest|index).*(pdf|document|txt)", "(?i)(pdf|txt|csv).*(ingest|index|document)"]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "cloud embeddings",
+      "leak_patterns": [
+        "(?i)embeddings.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*embeddings"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG2",
+      "term": "cloud LLM default",
+      "leak_patterns": [
+        "(?i)LLM.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*LLM"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG3",
+      "term": "React UI",
+      "leak_patterns": [
+        "(?i)React.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*React"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG4",
+      "term": "multi-user",
+      "leak_patterns": [
+        "(?i)multi\\-user.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*multi\\-user"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG5",
+      "term": "uploading documents anywhere",
+      "leak_patterns": [
+        "(?i)uploading.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*uploading"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG6",
+      "term": "financial advice/recommendations",
+      "leak_patterns": [
+        "(?i)advice/recommendations.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*advice/recommendations"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG7",
+      "term": "tax filing",
+      "leak_patterns": [
+        "(?i)filing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*filing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "D1",
+      "term": "spreadsheet formula reasoning"
+    },
+    {
+      "id": "D2",
+      "term": "multi-language OCR"
+    },
+    {
+      "id": "D3",
+      "term": "chat memory across sessions"
+    }
+  ],
+  "stack": {
+    "required": [
+      "Python CLI",
+      "local embeddings",
+      "FAISS vector store",
+      "SQLitefor metadata",
+      "Ollama 8B for answering"
+    ],
+    "forbidden": [],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "documents": {
+      "value": 500,
+      "match_pattern": "(?i)(max|limit|cap).*500.*documents",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": [
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Constraints"
+      ],
+      ".prd-reviews/*/prd-review.md": [
+        "Executive Summary"
+      ],
+      ".designs/*/design-doc.md": [
+        "Data Model",
+        "Security"
+      ]
+    }
+  }
+}

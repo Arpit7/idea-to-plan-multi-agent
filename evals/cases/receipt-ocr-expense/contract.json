@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "case_id": "receipt-ocr-expense",
+    "created_at": "2026-06-09",
+    "description": "Create a local expense tracker that ingests photos or PDFs of receipts, extracts merchant, date, line items, and total u"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "on-device OCR extraction",
+      "description": "Extract merchant, date, line items, and total from receipt images/PDFs using on-device OCR",
+      "match_patterns": ["(?i)(ocr|tesseract).*(extract|receipt)", "(?i)extract.*(merchant|total|line.?item)"]
+    },
+    {
+      "id": "R2",
+      "term": "LLM name normalization from structured only",
+      "description": "Local LLM normalizes merchant names and suggests category from extracted structured fields only",
+      "match_patterns": ["(?i)(llm|normaliz).*(merchant|category)", "(?i)structured.*field"]
+    },
+    {
+      "id": "R3",
+      "term": "fixed category taxonomy",
+      "description": "Suggest a category from a fixed taxonomy",
+      "match_patterns": ["(?i)(fixed|taxonomy).*categor", "(?i)categor.*(fixed|taxonomy)"]
+    },
+    {
+      "id": "R4",
+      "term": "local DB storage",
+      "description": "Store expenses in a local encrypted DB",
+      "match_patterns": ["(?i)(local|sqlite|encrypt).*(db|store)", "(?i)store.*expense"]
+    },
+    {
+      "id": "R5",
+      "term": "markdown expense summary",
+      "description": "Export a monthly Markdown expense summary",
+      "match_patterns": ["(?i)markdown.*(summary|expense)", "(?i)monthly.*summary"]
+    },
+    {
+      "id": "R6",
+      "term": "fully offline",
+      "description": "Runs fully offline; receipt images never leave the device",
+      "match_patterns": ["(?i)offline", "(?i)on.?device", "(?i)never.*(leave|off.?device)"]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "cloud OCR APIs",
+      "leak_patterns": [
+        "(?i)APIs.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*APIs"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG2",
+      "term": "cloud LLM default",
+      "leak_patterns": [
+        "(?i)LLM.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*LLM"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG3",
+      "term": "React UI",
+      "leak_patterns": [
+        "(?i)React.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*React"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG4",
+      "term": "multi-user",
+      "leak_patterns": [
+        "(?i)multi\\-user.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*multi\\-user"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG5",
+      "term": "bank integration",
+      "leak_patterns": [
+        "(?i)integration.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*integration"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG6",
+      "term": "tax filing",
+      "leak_patterns": [
+        "(?i)filing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*filing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG7",
+      "term": "sending receipt images off-device",
+      "leak_patterns": [
+        "(?i)off\\-device.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*off\\-device"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "D1",
+      "term": "mileage tracking"
+    },
+    {
+      "id": "D2",
+      "term": "multi-currency"
+    },
+    {
+      "id": "D3",
+      "term": "bulk import"
+    }
+  ],
+  "stack": {
+    "required": [
+      "Python CLI",
+      "Tesseract OCR",
+      "Pillow",
+      "SQLite",
+      "Ollama"
+    ],
+    "forbidden": [],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "expense_categories": {
+      "value": 15,
+      "match_pattern": "(?i)(max|limit|cap).*15.*expense\\ categor",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": [
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Constraints"
+      ],
+      ".prd-reviews/*/prd-review.md": [
+        "Executive Summary"
+      ],
+      ".designs/*/design-doc.md": [
+        "Data Model",
+        "Security"
+      ]
+    }
+  }
+}

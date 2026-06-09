@@ -8,18 +8,21 @@ Uses:
 - review task beads + `gc sling` to `$REVIEW_TARGET` (default: `$GC_RIG/polecat-review`)
 - worker formula `mol-review-leg` (see poc-city/formulas/mol-review-leg.toml)
 - one human clarification gate
+- eval contract auto-generated from CONTEXT (no LLM, deterministic parse)
 - final convoy + bead DAG in create-beads
+- Tier 1 eval gate validates output against user's stated constraints
 
-## Pipeline (10 steps, 9 review legs)
+## Pipeline (9 steps, 9 review legs)
 
-1. init-run
+1. init-run (validates CONTEXT + generates eval contract)
 2. draft-prd
 3. prd-review (3 parallel legs)
 4. human-clarify
 5. design-exploration (3 parallel legs)
-6. prd-align-1, prd-align-2, prd-align-3 (1 leg each)
-7. plan-review-1, plan-review-2 (1 leg each)
+6. prd-align (3 sequential rounds, 1 leg each)
+7. plan-review (2 sequential rounds, 1 leg each)
 8. create-beads
+9. eval-output (validates output against user's stated constraints)
 
 ## SPEED DIRECTIVE (applies to ALL steps)
 
@@ -76,6 +79,10 @@ default = ""
 description = "Formula used for dispatched review legs"
 default = "mol-review-leg"
 
+[vars.eval_dir]
+description = "Path to the evals directory containing eval_runner.py and context_parser.py"
+default = ""
+
 [[steps]]
 id = "init-run"
 title = "Initialize the planning run in the current repo"
@@ -88,7 +95,35 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
 ```
 
-**2. Resolve review target (poc-city default: polecat-review):**
+**2. Validate CONTEXT structure (required before any LLM work):**
+```bash
+EVAL_DIR="{{eval_dir}}"
+if [ -z "$EVAL_DIR" ]; then
+  EVAL_DIR="$REPO_ROOT/evals"
+fi
+python3 "$EVAL_DIR/context_parser.py" --context "{{context}}" --validate-only
+```
+
+If validation fails, stop immediately. Tell the human:
+> "CONTEXT is missing required labels. Please include at minimum:
+>   Non-goals: item1; item2; item3
+>   Stack: tech1; tech2; tech3
+> Optional: Target:, Limits:, Formats:, Defer:"
+
+Do NOT proceed with draft-prd until CONTEXT passes validation.
+
+**3. Generate eval contract (deterministic, no LLM):**
+```bash
+python3 "$EVAL_DIR/context_parser.py" \
+  --idea "{{problem}}" \
+  --context "{{context}}" \
+  --case-id "$REVIEW_ID" \
+  --output ".plan-reviews/$REVIEW_ID/eval-contract.json"
+```
+
+This contract is used in the final `eval-output` step to validate the run.
+
+**4. Resolve review target (poc-city default: polecat-review):**
 ```bash
 REVIEW_TARGET="{{review_target}}"
 if [ -z "$REVIEW_TARGET" ]; then
@@ -101,7 +136,7 @@ fi
 COORDINATOR="$GC_AGENT"
 ```
 
-**3. Create artifact dirs and progress tracker:**
+**5. Create artifact dirs and progress tracker:**
 Choose a short `REVIEW_ID` slug (e.g. `financial-planner`).
 
 ```bash
@@ -329,4 +364,49 @@ gc convoy create "<initiative-name>" --owned --target integration/<slug> --owner
 **6. Tell the human:** convoy id, artifact paths, first bead to sling.
 
 Set `CURRENT_STEP=create-beads` in state.env. Close this workflow step when done.
+"""
+
+[[steps]]
+id = "eval-output"
+title = "Run Tier 1 eval against the generated artifacts"
+needs = ["create-beads"]
+description = """
+Validate that the pipeline output respects the user's stated requirements,
+non-goals, stack, and limits. Uses the eval contract generated in init-run.
+
+**1. Run the eval checker:**
+```bash
+EVAL_DIR="{{eval_dir}}"
+if [ -z "$EVAL_DIR" ]; then
+  EVAL_DIR="$REPO_ROOT/../ai/gascity/evals"
+fi
+python3 "$EVAL_DIR/eval_runner.py" \
+  ".plan-reviews/$REVIEW_ID/eval-contract.json" \
+  "$REPO_ROOT" \
+  --report-dir ".plan-reviews/$REVIEW_ID/eval-reports/"
+```
+
+**2. Interpret results:**
+
+If verdict is **PASS**: report to the human:
+> "✓ Eval passed — all requirements covered, no non-goal leakage detected."
+
+If verdict is **FAIL**: report each failure to the human with the evidence.
+Categorize failures:
+- **Non-goal leakage** (e.g., React UI appeared in design phases): flag the specific
+  section of design-doc.md that violates the constraint. Ask the human whether to
+  remove it or accept the deviation.
+- **Missing requirement**: flag which requirement was not covered and where it should
+  have appeared.
+- **Stack violation**: flag the forbidden tech and where it was introduced.
+- **Missing artifacts**: flag which expected files are absent.
+
+Do NOT auto-fix failures. Present them to the human for decision.
+
+**3. Save report reference:**
+```bash
+ls -la ".plan-reviews/$REVIEW_ID/eval-reports/"
+```
+
+Set `CURRENT_STEP=eval-output` in state.env.
 """

@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "case_id": "emergency-fund-planner",
+    "created_at": "2026-06-09",
+    "description": "Build a local emergency-fund planner for one household. Ingest a bank CSV to estimate average monthly essential expenses"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "a local emergency-fund",
+      "description": "Provide a local emergency-fund capability",
+      "match_patterns": [
+        "(?i)a\\ local\\ emergency\\-fund"
+      ]
+    },
+    {
+      "id": "R2",
+      "term": "a funding",
+      "description": "Provide a funding capability",
+      "match_patterns": [
+        "(?i)a\\ funding"
+      ]
+    },
+    {
+      "id": "R3",
+      "term": "a Markdown emergency-fund",
+      "description": "Provide a Markdown emergency-fund capability",
+      "match_patterns": [
+        "(?i)a\\ Markdown\\ emergency\\-fund"
+      ]
+    },
+    {
+      "id": "R4",
+      "term": "markdown output",
+      "description": "Output in Markdown format",
+      "match_patterns": [
+        "(?i)markdown"
+      ]
+    },
+    {
+      "id": "R5",
+      "term": "deterministic model",
+      "description": "Uses deterministic computation (not probabilistic/LLM-driven)",
+      "match_patterns": [
+        "(?i)deterministic.*(model|comput|engine|math|calcul)"
+      ]
+    },
+    {
+      "id": "R6",
+      "term": "LLM narration from structured only",
+      "description": "LLM narrates from structured outputs only, never raw data",
+      "match_patterns": [
+        "(?i)llm.*narrat",
+        "(?i)structured.*out.*only",
+        "(?i)never.*raw"
+      ]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "investment recommendations",
+      "leak_patterns": [
+        "(?i)recommendations.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*recommendations"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG2",
+      "term": "insurance advice",
+      "leak_patterns": [
+        "(?i)insurance.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*insurance"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG3",
+      "term": "cloud LLM default",
+      "leak_patterns": [
+        "(?i)LLM.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*LLM"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG4",
+      "term": "React UI",
+      "leak_patterns": [
+        "(?i)React.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*React"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG5",
+      "term": "multi-user",
+      "leak_patterns": [
+        "(?i)multi\\-user.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*multi\\-user"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG6",
+      "term": "tax filing",
+      "leak_patterns": [
+        "(?i)filing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*filing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG7",
+      "term": "PDF/charts",
+      "leak_patterns": [
+        "(?i)PDF/charts.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*PDF/charts"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG8",
+      "term": "sending data to cloud",
+      "leak_patterns": [
+        "(?i)sending.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*sending"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "D1",
+      "term": "goal linking"
+    },
+    {
+      "id": "D2",
+      "term": "auto-sweep to liquid funds"
+    },
+    {
+      "id": "D3",
+      "term": "mobile app"
+    }
+  ],
+  "stack": {
+    "required": [
+      "Python CLI",
+      "Pandas",
+      "SQLite",
+      "Ollama"
+    ],
+    "forbidden": [],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "formats": {
+      "value": 1,
+      "match_pattern": "(?i)(exact|support|v1).*1.*(csv|format|source|template)",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": [
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Constraints"
+      ],
+      ".prd-reviews/*/prd-review.md": [
+        "Executive Summary"
+      ],
+      ".designs/*/design-doc.md": [
+        "Data Model",
+        "Security"
+      ]
+    }
+  }
+}

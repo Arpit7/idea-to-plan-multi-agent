@@ -1,0 +1,234 @@
+{
+  "meta": {
+    "case_id": "ai-budget-coach",
+    "created_at": "2026-06-09",
+    "description": "Build a local-first AI budgeting coach for one user. Ingest bank and credit-card CSVs, auto-categorize transactions with"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "t a monthly Markdown coaching",
+      "description": "Provide t a monthly Markdown coaching capability",
+      "match_patterns": [
+        "(?i)t\\ a\\ monthly\\ Markdown\\ coaching"
+      ]
+    },
+    {
+      "id": "R2",
+      "term": "markdown output",
+      "description": "Output in Markdown format",
+      "match_patterns": [
+        "(?i)markdown"
+      ]
+    },
+    {
+      "id": "R3",
+      "term": "deterministic model",
+      "description": "Uses deterministic computation (not probabilistic/LLM-driven)",
+      "match_patterns": [
+        "(?i)deterministic.*(model|comput|engine|math|calcul)"
+      ]
+    },
+    {
+      "id": "R4",
+      "term": "LLM narration from structured only",
+      "description": "LLM narrates from structured outputs only, never raw data",
+      "match_patterns": [
+        "(?i)llm.*narrat",
+        "(?i)structured.*out.*only",
+        "(?i)never.*raw"
+      ]
+    },
+    {
+      "id": "R5",
+      "term": "local-first",
+      "description": "All processing is local, no cloud dependency",
+      "match_patterns": [
+        "(?i)local.?(first|only)",
+        "(?i)no.*cloud"
+      ]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "React UI",
+      "leak_patterns": [
+        "(?i)React.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*React"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG2",
+      "term": "cloud LLM default",
+      "leak_patterns": [
+        "(?i)LLM.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*LLM"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG3",
+      "term": "auto-payments",
+      "leak_patterns": [
+        "(?i)auto\\-payments.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*auto\\-payments"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG4",
+      "term": "investment advice",
+      "leak_patterns": [
+        "(?i)investment.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*investment"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG5",
+      "term": "tax filing",
+      "leak_patterns": [
+        "(?i)filing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*filing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG6",
+      "term": "multi-user",
+      "leak_patterns": [
+        "(?i)multi\\-user.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*multi\\-user"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG7",
+      "term": "PDF/charts",
+      "leak_patterns": [
+        "(?i)PDF/charts.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*PDF/charts"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG8",
+      "term": "sending transactions to any LLM",
+      "leak_patterns": [
+        "(?i)transactions.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*transactions"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "D1",
+      "term": "goal tracking"
+    },
+    {
+      "id": "D2",
+      "term": "scenario what-if"
+    },
+    {
+      "id": "D3",
+      "term": "mobile app"
+    }
+  ],
+  "stack": {
+    "required": [
+      "Python CLI",
+      "Pandas",
+      "DuckDB",
+      "Ollama",
+      "Jinja2 for report templates"
+    ],
+    "forbidden": [],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "budget_categories": {
+      "value": 12,
+      "match_pattern": "(?i)(max|limit|cap).*12.*budget\\ categori",
+      "comparison": "eq"
+    },
+    "formats": {
+      "value": 3,
+      "match_pattern": "(?i)(exact|support|v1).*3.*(csv|format|source|template)",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": [
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Constraints"
+      ],
+      ".prd-reviews/*/prd-review.md": [
+        "Executive Summary"
+      ],
+      ".designs/*/design-doc.md": [
+        "Data Model",
+        "Security"
+      ]
+    }
+  }
+}

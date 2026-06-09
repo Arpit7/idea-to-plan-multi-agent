@@ -1,0 +1,216 @@
+{
+  "meta": {
+    "case_id": "epfo-nps-fetcher",
+    "created_at": "2026-06-09",
+    "description": "Create a local desktop application for fetching EPFO and NPS data from the government portals (EPFO UAN member portal an"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "term": "fetch EPFO and NPS data",
+      "description": "Fetch EPFO (UAN) and NPS (CRA) data from the government portals given user credentials",
+      "match_patterns": ["(?i)(EPFO|UAN).*(NPS|CRA)", "(?i)fetch.*(EPFO|NPS)", "(?i)(scrape|automat).*(login|portal|passbook)"]
+    },
+    {
+      "id": "R2",
+      "term": "login automation",
+      "description": "Automate login to government portals using stored credentials",
+      "match_patterns": ["(?i)(automat|headless|playwright).*login", "(?i)login.*(automat|portal)"]
+    },
+    {
+      "id": "R3",
+      "term": "unified local store",
+      "description": "Normalize fetched data into a unified local store",
+      "match_patterns": ["(?i)normaliz.*(store|local|unified)", "(?i)unified.*(store|local)"]
+    },
+    {
+      "id": "R4",
+      "term": "consolidated dashboard",
+      "description": "Present a consolidated retirement-savings dashboard with contribution history and interest",
+      "match_patterns": ["(?i)(dashboard|consolidated).*(retirement|contribution|savings)", "(?i)contribution.*history"]
+    },
+    {
+      "id": "R5",
+      "term": "credentials stay local",
+      "description": "Credentials and data never leave the machine; stored encrypted",
+      "match_patterns": ["(?i)(never.*leave|local|offline)", "(?i)(keyring|encrypt|sqlcipher)"]
+    }
+  ],
+  "non_goals": [
+    {
+      "id": "NG1",
+      "term": "cloud sync",
+      "leak_patterns": [
+        "(?i)sync.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*sync"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG2",
+      "term": "storing credentials in plaintext",
+      "leak_patterns": [
+        "(?i)credentials.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*credentials"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG3",
+      "term": "auto-investing",
+      "leak_patterns": [
+        "(?i)auto\\-investing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*auto\\-investing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG4",
+      "term": "tax filing",
+      "leak_patterns": [
+        "(?i)filing.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*filing"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG5",
+      "term": "multi-user",
+      "leak_patterns": [
+        "(?i)multi\\-user.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*multi\\-user"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG6",
+      "term": "mobile app",
+      "leak_patterns": [
+        "(?i)mobile.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*mobile"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG7",
+      "term": "React UI",
+      "leak_patterns": [
+        "(?i)React.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*React"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    },
+    {
+      "id": "NG8",
+      "term": "selling or transmitting data to third parties",
+      "leak_patterns": [
+        "(?i)transmitting.*(?:implement|phase|build|component|create|route|endpoint|schema|module)",
+        "(?i)(?:implement|phase|build|component|create|route|endpoint|schema|module).*transmitting"
+      ],
+      "safe_patterns": [
+        "(?i)non.?goal",
+        "(?i)not.*v1",
+        "(?i)defer",
+        "(?i)explicit.*non",
+        "(?i)out.*of.*scope"
+      ]
+    }
+  ],
+  "deferred": [
+    {
+      "id": "D1",
+      "term": "scheduled background sync"
+    },
+    {
+      "id": "D2",
+      "term": "2FA auto-handling"
+    },
+    {
+      "id": "D3",
+      "term": "aggregator account APIs"
+    }
+  ],
+  "stack": {
+    "required": [
+      "Python",
+      "Playwright",
+      "SQLite",
+      "Typer CLI",
+      "keyring for credential"
+    ],
+    "forbidden": [],
+    "allow_justified_deviation": true
+  },
+  "limits": {
+    "government_sources": {
+      "value": 2,
+      "match_pattern": "(?i)(max|limit|cap).*2.*government\\ sour",
+      "comparison": "eq"
+    }
+  },
+  "artifacts": {
+    "required_files": [
+      ".prd-reviews/*/prd-draft.md",
+      ".prd-reviews/*/prd-review.md",
+      ".designs/*/design-doc.md",
+      ".plan-reviews/*/state.env"
+    ],
+    "required_sections": {
+      ".prd-reviews/*/prd-draft.md": [
+        "Problem Statement",
+        "Goals",
+        "Non-Goals",
+        "Constraints"
+      ],
+      ".prd-reviews/*/prd-review.md": [
+        "Executive Summary"
+      ],
+      ".designs/*/design-doc.md": [
+        "Data Model",
+        "Security"
+      ]
+    }
+  }
+}

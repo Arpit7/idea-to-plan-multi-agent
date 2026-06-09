@@ -1,0 +1,240 @@
+<mxfile host="app.diagrams.net" agent="kiro" version="24.0.0" type="device">
+  <diagram id="demo13-arch" name="Demo - Idea to Plan">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ============ TITLE ============ -->
+        <mxCell id="title" value="&lt;b&gt;Demo — Idea to Plan&lt;/b&gt;&lt;br&gt;Multi-Agent Planning Architecture (mol-idea-to-plan v4 + Eval)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontColor=#1A237E;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="1000" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 1: HUMAN ============ -->
+        <mxCell id="human" value="&lt;b&gt;Human (Presenter)&lt;/b&gt;&lt;br&gt;&lt;br&gt;Provides scoped IDEA + semi-structured CONTEXT&lt;br&gt;Answers the clarify gate (step 4)&lt;br&gt;Reviews eval report (step 9)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=13;align=center;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="700" y="100" width="360" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 2: EVAL GATE (INPUT) ============ -->
+        <mxCell id="eval_input" value="&lt;b&gt;① Eval Gate — Input Validation&lt;/b&gt;&lt;br&gt;&lt;br&gt;context_parser.py (deterministic, no LLM)&lt;br&gt;• Validates CONTEXT has Non-goals: + Stack: labels&lt;br&gt;• Rejects run immediately if missing (0 tokens spent)&lt;br&gt;• Generates eval-contract.json from CONTEXT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;align=center;arcSize=8;dashed=1;dashPattern=8 4;" vertex="1" parent="1">
+          <mxGeometry x="600" y="270" width="560" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 3: MAYOR ============ -->
+        <mxCell id="mayor" value="&lt;b&gt;mayor — Coordinator Agent&lt;/b&gt;&lt;br&gt;&lt;br&gt;Walks 9 steps (mol-idea-to-plan v4)&lt;br&gt;Fan-out: batch-creates leg beads, slings to reviewers&lt;br&gt;Fan-in: reads inbox once per phase, synthesizes artifacts&lt;br&gt;Owns the single human gate&lt;br&gt;&lt;i&gt;Does NO review work itself&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=13;align=center;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="600" y="450" width="560" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 4: REVIEWER POOL ============ -->
+        <mxCell id="pool_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F8E9;strokeColor=#558B2F;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="200" y="700" width="1360" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="pool_title" value="&lt;b&gt;Reviewer Pool — polecat-review&lt;/b&gt;  (always-on, min_active_sessions = 1, runs mol-review-leg)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#33691E;" vertex="1" parent="1">
+          <mxGeometry x="200" y="705" width="1360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legA" value="&lt;b&gt;Review Leg A&lt;/b&gt;&lt;br&gt;&lt;br&gt;requirements-and-gaps&lt;br&gt;api-and-ux&lt;br&gt;requirements-goals-alignment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEDC8;strokeColor=#558B2F;fontSize=12;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="760" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="legB" value="&lt;b&gt;Review Leg B&lt;/b&gt;&lt;br&gt;&lt;br&gt;feasibility-and-scope&lt;br&gt;data-and-scale&lt;br&gt;constraints-and-nongoals" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEDC8;strokeColor=#558B2F;fontSize=12;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="690" y="760" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="legC" value="&lt;b&gt;Review Leg C&lt;/b&gt;&lt;br&gt;&lt;br&gt;ambiguity-and-stakeholders&lt;br&gt;security-and-integration&lt;br&gt;stories-and-open-questions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCEDC8;strokeColor=#558B2F;fontSize=12;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="760" width="380" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pool_note" value="&lt;i&gt;Each leg = one narrow lens, run in parallel. Pattern: read assignment → report in bead notes → mail mayor → close bead → drain.&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#33691E;" vertex="1" parent="1">
+          <mxGeometry x="240" y="890" width="1280" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 5: COORDINATION BACKBONE ============ -->
+        <mxCell id="bb_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57F17;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1020" width="1360" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="bb_title" value="&lt;b&gt;Shared State &amp; Coordination Backbone&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#E65100;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1025" width="1360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mail" value="&lt;b&gt;Mail (Async Messaging)&lt;/b&gt;&lt;br&gt;&lt;br&gt;Workers mail mayor on completion&lt;br&gt;Mayor reads inbox ONCE per phase&lt;br&gt;&lt;i&gt;Replaces poll / sleep loops&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=12;align=center;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1080" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="dolt" value="&lt;b&gt;Dolt (Versioned SQL)&lt;/b&gt;&lt;br&gt;&lt;br&gt;Single source of truth&lt;br&gt;Backs beads + mail&lt;br&gt;&lt;i&gt;&quot;Dolt is the queue&quot;&lt;/i&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="690" y="1070" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="beads" value="&lt;b&gt;Beads (Task Queue)&lt;/b&gt;&lt;br&gt;&lt;br&gt;One bead per review leg&lt;br&gt;Reports stored in bead notes&lt;br&gt;Convoy = bead DAG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=12;align=center;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="1080" width="360" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ROW 6: EVAL GATE (OUTPUT) ============ -->
+        <mxCell id="eval_output" value="&lt;b&gt;⑨ Eval Gate — Output Validation&lt;/b&gt;&lt;br&gt;&lt;br&gt;eval_runner.py (deterministic, 0 LLM tokens)&lt;br&gt;• Non-goal leakage (context-aware section classification)&lt;br&gt;• Requirement coverage (regex against output)&lt;br&gt;• Stack compliance (required present, forbidden absent)&lt;br&gt;• Limit enforcement (numeric constraints in data model)&lt;br&gt;• Artifact completeness + pipeline completion&lt;br&gt;&lt;br&gt;&lt;b&gt;Verdict: PASS / FAIL with evidence&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=12;align=center;arcSize=8;dashed=1;dashPattern=8 4;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1310" width="1360" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- ============ ARTIFACTS (far right) ============ -->
+        <mxCell id="art_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="270" width="220" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="art_title" value="&lt;b&gt;Artifacts&lt;/b&gt;&lt;br&gt;(~/poc-city)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#4A148C;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="275" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="evalcontract" value="&lt;b&gt;eval-contract.json&lt;/b&gt;&lt;br&gt;(auto-generated from CONTEXT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="330" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="prd" value="&lt;b&gt;PRD&lt;/b&gt;&lt;br&gt;prd-draft.md&lt;br&gt;prd-review.md" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="410" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="design" value="&lt;b&gt;Design Doc&lt;/b&gt;&lt;br&gt;design-doc.md&lt;br&gt;(3 align passes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="510" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="stateenv" value="&lt;b&gt;state.env&lt;/b&gt;&lt;br&gt;CURRENT_STEP=&lt;br&gt;(resume marker)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="610" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="beadsmd" value="&lt;b&gt;beads-created.md&lt;/b&gt;&lt;br&gt;(final task list)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="710" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="convoy" value="&lt;b&gt;Convoy&lt;/b&gt;&lt;br&gt;Implementation DAG&lt;br&gt;→ sling to coders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#6A1B9A;fontStyle=0;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="800" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="evalreport" value="&lt;b&gt;eval-reports/&lt;/b&gt;&lt;br&gt;PASS/FAIL JSON&lt;br&gt;(evidence per check)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;align=center;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="890" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============ BOTTOM STRIPS ============ -->
+        <mxCell id="pipe" value="&lt;b&gt;Pipeline (9 steps):&lt;/b&gt;  ① validate CONTEXT + gen contract → 2 draft-prd → 3 prd-review (3 legs) → 4 human-clarify ★ → 5 design-exploration (3 legs) → 6 prd-align ×3 → 7 plan-review ×2 → 8 create-beads → ⑨ eval-output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#455A64;fontSize=12;align=center;fontColor=#263238;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1510" width="1660" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="metrics" value="&lt;b&gt;Optimization (v4):&lt;/b&gt; mail-driven + always-on workers + 9 legs (was 24) + eval bookends (0 tokens)  |  ~4 h → ~20–30 min  |  ~992K → ~220K tokens  |  ~21 nudges → 0  |  scope drift: auto-detected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#F9A825;fontSize=12;align=center;fontColor=#E65100;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1570" width="1660" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ============ EDGES ============ -->
+
+        <!-- Human → Eval Input (straight down) -->
+        <mxCell id="e0" value="IDEA + CONTEXT" style="rounded=0;html=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#1B5E20;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="human" target="eval_input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Eval Input → Mayor (straight down) -->
+        <mxCell id="e1" value="✓ valid → proceed" style="rounded=0;html=1;strokeColor=#1565C0;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#0D47A1;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval_input" target="mayor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Eval Input → Artifacts (contract) -->
+        <mxCell id="e1b" value="eval-contract.json" style="rounded=0;html=1;strokeColor=#2E7D32;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=10;fontColor=#2E7D32;labelBackgroundColor=#ffffff;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.08;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval_input" target="art_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Mayor ↔ Human (clarify gate) -->
+        <mxCell id="e2" value="★ human-clarify" style="rounded=0;html=1;strokeColor=#C62828;strokeWidth=2;dashed=1;endArrow=block;startArrow=block;endFill=1;startFill=1;fontSize=11;fontColor=#C62828;fontStyle=1;labelBackgroundColor=#ffffff;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="mayor" target="human">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="450" />
+              <mxPoint x="1200" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Mayor → Pool (straight down) -->
+        <mxCell id="e3" value="batch-create beads + sling legs (parallel)" style="rounded=0;html=1;strokeColor=#558B2F;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#33691E;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mayor" target="pool_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Pool → Mail (straight down) -->
+        <mxCell id="e4" value="mail mayor: leg complete" style="rounded=0;html=1;strokeColor=#558B2F;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#33691E;labelBackgroundColor=#ffffff;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pool_box" target="mail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Pool → Beads (straight down) -->
+        <mxCell id="e5" value="write report to bead notes + close" style="rounded=0;html=1;strokeColor=#558B2F;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#33691E;labelBackgroundColor=#ffffff;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pool_box" target="beads">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Mail → Mayor (left side loop) -->
+        <mxCell id="e6" value="read inbox (once/phase)" style="rounded=0;html=1;strokeColor=#EF6C00;strokeWidth=2;dashed=1;endArrow=block;endFill=1;fontSize=11;fontColor=#E65100;labelBackgroundColor=#ffffff;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="mail" target="mayor">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="1080" />
+              <mxPoint x="130" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Mayor → Artifacts (straight right) -->
+        <mxCell id="e7" value="synthesize artifacts" style="rounded=0;html=1;strokeColor=#6A1B9A;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#4A148C;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;" edge="1" parent="1" source="mayor" target="art_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Beads → Convoy (to artifacts) -->
+        <mxCell id="e8" value="create-beads → convoy DAG" style="rounded=0;html=1;strokeColor=#6A1B9A;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#4A148C;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="beads" target="art_box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1600" y="1145" />
+              <mxPoint x="1600" y="855" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Artifacts → Eval Output (down from artifacts to eval) -->
+        <mxCell id="e9b" value="all artifacts" style="rounded=0;html=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#1B5E20;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="art_box" target="eval_output">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1750" y="1100" />
+              <mxPoint x="1750" y="1358" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Eval Output → Eval Report artifact -->
+        <mxCell id="e9c" value="report" style="rounded=0;html=1;strokeColor=#2E7D32;strokeWidth=1;dashed=1;endArrow=block;endFill=1;fontSize=10;fontColor=#2E7D32;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval_output" target="evalreport">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1620" y="1390" />
+              <mxPoint x="1620" y="925" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Eval Output → Human (verdict) -->
+        <mxCell id="e9d" value="PASS / FAIL verdict" style="rounded=0;html=1;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;fontColor=#1B5E20;fontStyle=1;labelBackgroundColor=#ffffff;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval_output" target="human">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="1310" />
+              <mxPoint x="80" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Mail ↔ Dolt (internal) -->
+        <mxCell id="e9" style="rounded=0;html=1;strokeColor=#EF6C00;strokeWidth=1;endArrow=block;startArrow=block;endFill=1;startFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mail" target="dolt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Dolt ↔ Beads (internal) -->
+        <mxCell id="e10" style="rounded=0;html=1;strokeColor=#EF6C00;strokeWidth=1;endArrow=block;startArrow=block;endFill=1;startFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="dolt" target="beads">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============ LEGEND ============ -->
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;arcSize=3;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1510" width="140" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1510" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_blue" value="— Agent flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1530" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_green" value="— Eval (0 tokens)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1548" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_red" value="— Human gate" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1566" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_orange" value="— Coordination" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#EF6C00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1584" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_purple" value="— Artifacts" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10;fontColor=#6A1B9A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1602" width="120" height="18" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
