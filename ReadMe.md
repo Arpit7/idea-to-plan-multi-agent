@@ -2,6 +2,8 @@
 
 **Turn a vague feature idea into a reviewed PRD, a design doc, and a ready-to-build task graph — automatically, using a team of AI agents that coordinate like a real engineering org.**
 
+Framework Used : https://github.com/gastownhall/gascity
+
 ## Demo
 
 [Watch the live demo](video1699678901.mp4) — agent coordination trace, parallel review dispatch, artifact synthesis, and convoy DAG export (~20–30 min end-to-end).
