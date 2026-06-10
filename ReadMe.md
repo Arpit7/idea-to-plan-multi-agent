@@ -6,7 +6,7 @@ Framework Used : https://github.com/gastownhall/gascity
 
 ## Demo
 
-[Watch the live demo](https://drive.google.com/file/d/11CTR0VIX7xUfrCbzKg6mEDtC6MPG54JF/view?usp=drive_link)) — agent coordination trace, parallel review dispatch, artifact synthesis, and convoy DAG export (~20–30 min end-to-end).
+[Watch the live demo](https://drive.google.com/file/d/11CTR0VIX7xUfrCbzKg6mEDtC6MPG54JF/view?usp=drive_link) — agent coordination trace, parallel review dispatch, artifact synthesis, and convoy DAG export (~20–30 min end-to-end).
 
 ## Features
 
